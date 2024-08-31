@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import NavBar from "./ui/navbar";
-
-const inter = Inter({ subsets: ["latin"] });
+import { GeistSans } from 'geist/font/sans';
 
 export const metadata: Metadata = {
   title: "Park Suhyeon",
@@ -17,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter}`}>
+      <body className={GeistSans.className}>
         <div className="pr-8 absolute -left-64 hover:left-0 ease-out duration-300">
           <NavBar />
         </div>
