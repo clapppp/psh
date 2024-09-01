@@ -3,12 +3,12 @@ import dynamic from "next/dynamic";
 const now = new Date();
 const index = Math.floor(now.getMinutes() / 10); //0~5
 const lists = [
-  './ui/dog',
-  './ui/dog',
-  './ui/dog',
-  './ui/dog',
-  './ui/dog',
-  './ui/dog'
+  './ui/playground',
+  './ui/playground',
+  './ui/playground',
+  './ui/playground',
+  './ui/playground',
+  './ui/playground'
 ]
 
 const Content = dynamic(() => import(`${lists[index]}`), {

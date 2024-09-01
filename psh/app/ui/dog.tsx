@@ -22,7 +22,7 @@ export default function Dog() {
 
         function animate() {
             requestAnimationFrame(animate);
-            renderer.render(camera,);
+            renderer.render(scene ,camera);
         }
         animate();
         
