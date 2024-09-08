@@ -24,17 +24,20 @@ export default function Playground() {
     useEffect(() => {
         const username = "User_" + String(new Date().getTime()).substring(10);
         const user: user = { name: username, x: 0, y: 0 };
+        const userList = new Map();
         let intervalId: NodeJS.Timeout;
 
         const ws = new WebSocket('wss://solid-capybara-gp4qpq676v4hw654-3000.app.github.dev/api/socket');
         ws.onopen = () => {
             intervalId = setInterval(() => {
                 ws.send(JSON.stringify(user));
-            }, 100);
+            }, 3000);
             console.log('Websocket connection Established');
         }
         ws.onmessage = (event) => {
-            console.log(event.data);
+            Object.entries(JSON.parse(event.data)).forEach(([key, value]) => {
+                userList.set(key, value);
+            });
         }
         ws.onclose = () => {
             console.log('disconnected');
@@ -90,12 +93,6 @@ export default function Playground() {
 
                 velocity.multiplyScalar(friction);
 
-                //Server에 본인 좌표 보내기
-
-                //Clients 좌표 받아오기
-
-                //Clients scene에 add
-
                 renderer.render(scene, camera);
             }
             animate();
@@ -104,9 +101,11 @@ export default function Playground() {
             console.error('An error occurred loading the model:', error);
         });
 
+
+
+
         threeRef.current?.appendChild(renderer.domElement);
         setTimeout(() => setInit(true), 1000); //고쳐야됨..
-
 
         const handleResize = () => {
             renderer.setSize(window.innerWidth, window.innerHeight);
@@ -125,7 +124,6 @@ export default function Playground() {
                 keylist[event.key] = false;
             }
         });
-
 
         return () => {
             window.removeEventListener('resize', handleResize);

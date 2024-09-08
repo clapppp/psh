@@ -14,6 +14,8 @@ app.prepare().then(() => {
         handle(req, res, parsedUrl);
     });
 
+    const userList = new Map();
+
     // WebSocket 서버를 별도의 경로에서 실행 (HMR 경로와 충돌 방지)
     const wss = new WebSocketServer({ server, path: '/api/socket' });
 
@@ -21,9 +23,11 @@ app.prepare().then(() => {
     wss.on('connection', (ws) => {
         console.log('새 클라이언트 연결됨');
 
-        ws.on('message', (message) => {
-            console.log('클라이언트로부터 받은 메시지:', message.toString());
-            ws.send(`서버에서 받은 메시지: ${message}`);
+        ws.on('message', (message) => { //message : JSON
+            console.log("message.toString = ", message.toString());
+            const user = JSON.parse(message);
+            console.log("JSON.parse(message) = ", user);
+            userList.set(user.name , user);
         });
 
         ws.on('close', () => {
@@ -32,7 +36,14 @@ app.prepare().then(() => {
 
         ws.on('error', (error) => {
             console.error('WebSocket 에러:', error);
+            clearInterval(interval);
         });
+
+        const interval = setInterval(() => {
+            wss.clients.forEach((client) => {
+                client.send(JSON.stringify(Object.fromEntries(userList)));
+            })
+        }, 3000);
     });
 
     // 서버 실행
