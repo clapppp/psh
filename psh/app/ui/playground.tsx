@@ -2,43 +2,21 @@
 
 import { useEffect, useRef, useState } from "react";
 import * as Three from 'three';
-import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { threejs } from "./threejs";
-
-type user = {
-    gltf?: GLTF,
-    name: string,
-    x: number,
-    y: number
-}
-
-const keylist: { [key: string]: boolean } = {
-    ArrowUp: false,
-    ArrowDown: false,
-    ArrowLeft: false,
-    ArrowRight: false
-}
+import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { threejs, addGltf } from "./lib/threejs";
+import { user, keylist, cycle, listenerFunctions } from './lib/data';
 
 export default function Playground() {
     const threeRef = useRef<HTMLDivElement>(null);
-    const [init, setInit] = useState(false); //화면가리개
+    const [init, setInit] = useState(false);  //화면가리개
     const username = "User_" + String(new Date().getTime()).substring(10);
     const user: user = { name: username, x: 0, y: 0 };
     const userList = new Map();
     const gltfList = new Map<string, GLTF>();
-    const cycle = 100;
 
     useEffect(() => {
         let intervalId: NodeJS.Timeout;
         const ws = new WebSocket('wss://solid-capybara-gp4qpq676v4hw654-3000.app.github.dev/api/socket');
-
-        function addGltf(key: string) {
-            const loader = new GLTFLoader();
-            loader.load('/model/scene.gltf', function (gltf) {
-                scene.add(gltf.scene);
-                gltfList.set(key, gltf);
-            })
-        }
 
         ws.onopen = () => {
             intervalId = setInterval(() => {
@@ -51,7 +29,7 @@ export default function Playground() {
             const updateMap = new Map(Object.entries(JSON.parse(event.data)));
             updateMap.forEach((value, key) => {
                 if (key === user.name) return; //본인은 관리 X
-                if (!userList.has(key)) addGltf(key); //처음 들어온 클라는 gltf에 추가
+                if (!userList.has(key)) addGltf(key, gltfList); //처음 들어온 클라는 gltf에 추가
                 userList.set(key, value);
             })
             userList.forEach((value, key) => {
@@ -74,31 +52,18 @@ export default function Playground() {
             scene = new Three.Scene()
         } = threejs(user, gltfList, userList, keylist) || {};
 
-
         threeRef.current?.appendChild(renderer.domElement);
-        setTimeout(() => setInit(true), 1000); //고쳐야됨..
+        setTimeout(() => setInit(true), 1000); // 화면가리개 - 고쳐야됨..
 
-        const handleResize = () => {
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-        };
-
+        const { handleResize, keydownEvent, keyupEvent } = listenerFunctions(renderer, camera);
         window.addEventListener('resize', handleResize);
-
-        window.addEventListener('keydown', (event) => {
-            if (event.key in keylist) {
-                keylist[event.key] = true;
-            }
-        });
-        window.addEventListener('keyup', (event) => {
-            if (event.key in keylist) {
-                keylist[event.key] = false;
-            }
-        });
+        window.addEventListener('keydown', keydownEvent);
+        window.addEventListener('keyup', keyupEvent);
 
         return () => {
             window.removeEventListener('resize', handleResize);
+            window.removeEventListener('keydown', keydownEvent);
+            window.removeEventListener('keyup', keyupEvent);
             renderer.dispose();
             threeRef.current?.removeChild(renderer.domElement);
             clearInterval(intervalId);

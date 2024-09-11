@@ -84,3 +84,11 @@ export function threejs(user: user, gltfList: Map<string, GLTF>, userList: Map<a
         return { renderer, camera, scene };
     }
 }
+
+export function addGltf(key: string, gltfList: Map<string, GLTF>) {
+    const loader = new GLTFLoader();
+    loader.load('/model/scene.gltf', function (gltf) {
+        scene.add(gltf.scene);
+        gltfList.set(key, gltf);
+    })
+}
