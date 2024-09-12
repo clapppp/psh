@@ -23,7 +23,7 @@ app.prepare().then(() => {
 
         ws.on('message', (message) => {
             const user = JSON.parse(message);
-            userList.set(user.name, user); 
+            userList.set(user.name, user);
             clientList.set(ws, user.name);
         });
 

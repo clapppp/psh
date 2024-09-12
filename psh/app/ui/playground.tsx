@@ -40,6 +40,7 @@ export default function Playground() {
                     gltfList.delete(key);
                 }
             });
+            console.log('receive message');
         }
 
         ws.onclose = () => {

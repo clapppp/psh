@@ -1,5 +1,6 @@
 import * as Three from 'three'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { cycle } from './data';
 
 type user = {
     gltf?: GLTF,
@@ -11,6 +12,10 @@ type user = {
 type keylist = {
     [key: string]: boolean
 }
+
+const speedList = new Map<string, Three.Vector3>;
+const accelList = new Map<string, Three.Vector3>;
+const cordList = new Map<string, Three.Vector3>;
 
 const scene = new Three.Scene();
 scene.background = new Three.Color(0xf0f0f0);
@@ -42,7 +47,7 @@ export function threejs(user: user, gltfList: Map<string, GLTF>, userList: Map<a
         const renderer = new Three.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         loader.load('/model/scene.gltf', function (gltf) {
-
+            let prevPos = new Three.Vector3(0, 0, 0);
             scene.add(gltf.scene);
             function animate() {
                 requestAnimationFrame(animate);
@@ -61,19 +66,33 @@ export function threejs(user: user, gltfList: Map<string, GLTF>, userList: Map<a
                 gltf.scene.position.y = Math.min(Math.max(gltf.scene.position.y, -15), 15);
                 user.x = gltf.scene.position.x;
                 user.y = gltf.scene.position.y;
+                console.log(`name:${user.name}, x:${user.x}, y:${user.y}`);
 
                 velocity.multiplyScalar(friction);
 
                 for (const name of gltfList.keys()) {
                     const gltf = gltfList.get(name);
                     const user: user = userList.get(name);
-                    if (gltf && user) {
-                        gltf.scene.position.x = user.x;
-                        gltf.scene.position.y = user.y;
+                    const nowPos = new Three.Vector3(user.x, user.y, 0);
+                    if (nowPos.equals(prevPos)) {
+                        gltf?.scene.position.copy(new Three.Vector3().addVectors(gltf.scene.position, cordList.get(name) ?? new Three.Vector3));
+                    }
+                    else {
+                        if (gltf && user) gltf.scene.position.copy(nowPos);
+                        if (!speedList.has(name)) speedList.set(name, new Three.Vector3(0, 0, 0));
+                        const nowSpeed = new Three.Vector3().subVectors(nowPos, prevPos).divideScalar(0.1);
+                        accelList.set(name, new Three.Vector3().subVectors(nowSpeed, speedList.get(name) ?? new Three.Vector3).divideScalar(cycle / 1000));
+                        speedList.set(name, nowSpeed);
+                        const nextPos = new Three.Vector3().addVectors(new Three.Vector3().addVectors(nowSpeed, accelList.get(name) ?? new Three.Vector3).multiplyScalar(cycle / 1000), nowPos);
+                        cordList.set(name, new Three.Vector3().subVectors(nextPos, nowPos).divideScalar(11));
+                        console.log(name, ' : set complete');
                     }
                 }
 
+
+
                 renderer.render(scene, camera);
+                console.log('render.');
             }
             animate();
 
