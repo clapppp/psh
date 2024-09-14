@@ -77,7 +77,7 @@ export default function Playground() {
             <div className={`grid place-content-center bg-white h-screen w-screen ${init ? 'hidden' : ''}`}>
                 <p>Loading...</p>
             </div>
-            <div ref={threeRef} className={`${init ? '' : 'hidden'}`} />
+            <div ref={threeRef} className={`${init ? '' : 'hidden'} h-screen`} />
         </>
     )
 }
