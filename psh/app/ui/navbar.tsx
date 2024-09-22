@@ -21,8 +21,8 @@ export default function NavBar() {
             <div className="grow" />
 
             <div className="m-4 flex justify-center">
-                <a href="https://github.com/clapppp">
-                    <FaGithub size={24}/>
+                <a href="https://github.com/clapppp/psh">
+                    <FaGithub size={24} />
                 </a>
             </div>
         </nav>
