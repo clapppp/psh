@@ -23,6 +23,7 @@ export default function Playground() {
   const scene = new Three.Scene();
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     let intervalId: NodeJS.Timeout;
 
     const ws = new WebSocket(
