@@ -42,8 +42,9 @@ app.prepare().then(() => {
 
         const interval = setInterval(() => {
             wss.clients.forEach((client) => {
-                client.send(JSON.stringify(Object.fromEntries(userList)));
-            })
+                const sendArray = Array.from(userList.entries());
+                client.send(JSON.stringify(sendArray));
+            }) //Map => iterable => array => Json 으로 보냄
         }, cycle);
     });
 

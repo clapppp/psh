@@ -1,86 +1,95 @@
-'use client'
+"use client";
 
 import { useEffect, useRef, useState } from "react";
-import * as Three from 'three';
-import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { threejs, addGltf } from "./lib/threejs";
-import { user, keylist, cycle, listenerFunctions } from './lib/data';
+import * as Three from "three";
+import { cycle, listenerFunctions } from "./lib/data";
+import { gltfList, nameList, user, userList } from "./lib/type";
+import { initMap, updateMap } from "./lib/manageMap";
+import { initThree, startThree } from "./lib/manageThree";
+
+const username = "User_" + String(new Date().getTime()).substring(10);
 
 export default function Playground() {
-    const threeRef = useRef<HTMLDivElement>(null);
-    const [init, setInit] = useState(false);  //화면가리개
-    const username = "User_" + String(new Date().getTime()).substring(10);
-    const user: user = { name: username, x: 0, y: 0 };
-    const userList = new Map();
-    const gltfList = new Map<string, GLTF>();
+  const threeRef = useRef<HTMLDivElement>(null);
+  const [init, setInit] = useState(false); //화면가리개
+  const user: user = { name: username, x: 0, y: 0 };
+  const userList: userList = new Map();
+  const gltfList: gltfList = new Map();
+  const nameList: nameList = new Map();
+  initMap(userList, gltfList, nameList, username);
 
-    useEffect(() => {
-        let intervalId: NodeJS.Timeout;
-        const ws = new WebSocket('wss://solid-capybara-gp4qpq676v4hw654-3000.app.github.dev/api/socket');
+  const renderer = new Three.WebGLRenderer();
+  const camera = new Three.PerspectiveCamera();
+  const scene = new Three.Scene();
 
-        ws.onopen = () => {
-            intervalId = setInterval(() => {
-                ws.send(JSON.stringify(user));
-            }, cycle);
-            console.log('websocket connected');
-        }
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    let intervalId: NodeJS.Timeout;
 
-        ws.onmessage = (event) => {
-            const updateMap = new Map(Object.entries(JSON.parse(event.data)));
-            updateMap.forEach((value, key) => {
-                if (key === user.name) return; //본인은 관리 X
-                if (!userList.has(key)) addGltf(key, gltfList); //처음 들어온 클라는 gltf에 추가
-                userList.set(key, value);
-            })
-            userList.forEach((value, key) => {
-                if (!updateMap.has(key)) {
-                    userList.delete(key);
-                    const objectToRemove = gltfList.get(key)?.scene;
-                    if (objectToRemove) scene.remove(objectToRemove);
-                    gltfList.delete(key);
-                }
-            });
-            console.log('receive message');
-        }
+    const ws = new WebSocket(
+      // "wss://solid-capybara-gp4qpq676v4hw654-3000.app.github.dev/api/socket"
+      "ws://localhost:3000/api/socket"
+    );
 
-        ws.onclose = () => {
-            console.log('websocket disconnected');
-        }
+    ws.onopen = () => {
+      intervalId = setInterval(() => {
+        ws.send(JSON.stringify(user));
+      }, cycle);
+      console.log("websocket connected");
+    };
 
-        const {
-            renderer = new Three.WebGLRenderer(),
-            camera = new Three.PerspectiveCamera(),
-            scene = new Three.Scene()
-        } = threejs(user, gltfList, userList, keylist) || {};
+    ws.onmessage = (event) => {
+      updateMap(event);
+    };
 
+<<<<<<< HEAD
         threeRef.current?.appendChild(renderer.domElement);
 
         
 
         setTimeout(() => setInit(true), 1000); // 화면가리개 - 고쳐야됨..
+=======
+    ws.onclose = () => {
+      console.log("websocket disconnected");
+    };
+>>>>>>> origin
 
-        const { handleResize, keydownEvent, keyupEvent } = listenerFunctions(renderer, camera);
-        window.addEventListener('resize', handleResize);
-        window.addEventListener('keydown', keydownEvent);
-        window.addEventListener('keyup', keyupEvent);
+    initThree(renderer, camera, scene, user);
 
-        return () => {
-            window.removeEventListener('resize', handleResize);
-            window.removeEventListener('keydown', keydownEvent);
-            window.removeEventListener('keyup', keyupEvent);
-            renderer.dispose();
-            threeRef.current?.removeChild(renderer.domElement);
-            clearInterval(intervalId);
-            ws.close();
-        };
-    }, [])
+    startThree();
 
-    return (
-        <>
-            <div className={`grid place-content-center bg-white h-screen w-screen ${init ? 'hidden' : ''}`}>
-                <p>Loading...</p>
-            </div>
-            <div ref={threeRef} className={`${init ? '' : 'hidden'} h-screen`} />
-        </>
-    )
+    threeRef.current?.appendChild(renderer.domElement);
+    setTimeout(() => setInit(true), 1000); // 화면가리개 - 고쳐야됨..
+
+    const { handleResize, keydownEvent, keyupEvent } = listenerFunctions(
+      renderer,
+      camera
+    );
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("keydown", keydownEvent);
+    window.addEventListener("keyup", keyupEvent);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("keydown", keydownEvent);
+      window.removeEventListener("keyup", keyupEvent);
+      renderer.dispose();
+      threeRef.current?.removeChild(renderer.domElement);
+      clearInterval(intervalId);
+      ws.close();
+    };
+  }, []);
+
+  return (
+    <>
+      <div
+        className={`grid place-content-center bg-white h-screen w-screen ${
+          init ? "hidden" : ""
+        }`}
+      >
+        <p>Loading...</p>
+      </div>
+      <div ref={threeRef} className={`${init ? "" : "hidden"} h-screen`} />
+    </>
+  );
 }
