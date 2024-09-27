@@ -99,7 +99,9 @@ export function threejs(user: user, gltfList: Map<string, GLTF>, userList: Map<a
             }
             animate();
 
-        }, undefined, function (error) {
+        }, function (event) {
+            
+        }, function (error) {
             console.error('An error occurred loading the model:', error);
         });
 

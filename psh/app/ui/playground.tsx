@@ -54,6 +54,9 @@ export default function Playground() {
         } = threejs(user, gltfList, userList, keylist) || {};
 
         threeRef.current?.appendChild(renderer.domElement);
+
+        
+
         setTimeout(() => setInit(true), 1000); // 화면가리개 - 고쳐야됨..
 
         const { handleResize, keydownEvent, keyupEvent } = listenerFunctions(renderer, camera);
