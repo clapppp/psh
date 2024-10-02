@@ -11,6 +11,7 @@ const userList = new Map();
 const clientList = new Map();
 
 app.prepare().then(() => {
+
     const server = createServer((req, res) => {
         const parsedUrl = parse(req.url, true);
         handle(req, res, parsedUrl);

@@ -16,7 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={GeistSans.className}>
-        <div className="pr-8 absolute -left-64 hover:left-0 ease-out duration-300">
+        <div className="pr-10 absolute -left-64 hover:left-0 ease-out duration-300">
           <NavBar />
         </div>
         <div>

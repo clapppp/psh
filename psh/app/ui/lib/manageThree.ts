@@ -11,8 +11,10 @@ import {
 
 let camera = new Three.PerspectiveCamera(75, 1, 0.1, 1000);
 let scene = new Three.Scene();
-let renderer = new Three.WebGLRenderer({ antialias: true });
+let renderer = new Three.WebGLRenderer();
 let client: user;
+let setInit: React.Dispatch<React.SetStateAction<boolean>>;
+
 const ambientLight = new Three.AmbientLight(0xffffff, 1);
 const directionalLight = new Three.DirectionalLight(0xffffff, 2);
 const floor = new Three.Mesh(
@@ -29,19 +31,22 @@ export function initThree(
   newrenderer: Three.WebGLRenderer,
   newcamera: Three.PerspectiveCamera,
   newscene: Three.Scene,
-  newclient: user
+  newclient: user,
+  newsetInit: React.Dispatch<React.SetStateAction<boolean>>
 ) {
   renderer = newrenderer;
   camera = newcamera;
   scene = newscene;
   client = newclient;
+  setInit = newsetInit;
 
   scene.background = new Three.Color(0xf0f0f0);
   directionalLight.position.set(5, 5, 5).normalize();
   camera.position.set(0, -30, 40);
   camera.lookAt(0, -5, 0);
-  camera.aspect = window.innerWidth / window.innerHeight;
   renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
 
   addToScene(ambientLight, directionalLight, floor);
 }
@@ -52,7 +57,6 @@ export function startThree() {
   loader.load(
     "/model/scene.gltf",
     function (gltf) {
-      let prevPos = new Three.Vector3(0, 0, 0);
       const nameMesh = createMesh(client.name, true);
       addToScene(gltf.scene, nameMesh);
       function animate(time: DOMHighResTimeStamp) {
@@ -78,7 +82,9 @@ export function startThree() {
       }
       requestAnimationFrame(animate);
     },
-    undefined,
+    function (event) {
+      if (event.eventPhase === event.AT_TARGET) setInterval(() => setInit(true), 300);
+    },
     function (error) {
       console.error("An error occurred loading the model:", error);
     }

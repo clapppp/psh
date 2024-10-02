@@ -23,12 +23,11 @@ export default function Playground() {
   const scene = new Three.Scene();
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
     let intervalId: NodeJS.Timeout;
 
     const ws = new WebSocket(
-      // "wss://solid-capybara-gp4qpq676v4hw654-3000.app.github.dev/api/socket"
-      "ws://localhost:3000/api/socket"
+      "wss://solid-capybara-gp4qpq676v4hw654-3000.app.github.dev/api/socket"
+      // "ws://34.47.112.250:3000/api/socket"
     );
 
     ws.onopen = () => {
@@ -42,24 +41,15 @@ export default function Playground() {
       updateMap(event);
     };
 
-<<<<<<< HEAD
-        threeRef.current?.appendChild(renderer.domElement);
-
-        
-
-        setTimeout(() => setInit(true), 1000); // 화면가리개 - 고쳐야됨..
-=======
     ws.onclose = () => {
       console.log("websocket disconnected");
     };
->>>>>>> origin
 
-    initThree(renderer, camera, scene, user);
+    initThree(renderer, camera, scene, user, setInit);
 
     startThree();
 
     threeRef.current?.appendChild(renderer.domElement);
-    setTimeout(() => setInit(true), 1000); // 화면가리개 - 고쳐야됨..
 
     const { handleResize, keydownEvent, keyupEvent } = listenerFunctions(
       renderer,
@@ -83,11 +73,10 @@ export default function Playground() {
   return (
     <>
       <div
-        className={`grid place-content-center bg-white h-screen w-screen ${
-          init ? "hidden" : ""
-        }`}
+        className={`grid place-content-center bg-white h-screen w-screen ${init ? "hidden" : ""
+          }`}
       >
-        <p>Loading...</p>
+        <p>loading...</p>
       </div>
       <div ref={threeRef} className={`${init ? "" : "hidden"} h-screen`} />
     </>

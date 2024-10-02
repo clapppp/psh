@@ -1,21 +1,37 @@
 import dynamic from "next/dynamic";
 
-const now = new Date();
-const index = Math.floor(now.getMinutes() / 10); //0~5
-const lists = [
+const listsCom = [
   "./ui/playground",
   "./ui/playground",
   "./ui/playground",
   "./ui/playground",
   "./ui/playground",
-  "./ui/playground",
+  "./ui/cosmos",
+];
+const listsMob = [
+  "./ui/cosmos",
+  "./ui/cosmos",
+  "./ui/cosmos",
+  "./ui/cosmos",
+  "./ui/cosmos",
+  "./ui/cosmos",
 ];
 
-const Content = dynamic(() => import(`${lists[index]}`), {
-  loading: () => <p>loading...</p>,
+function importTarget(rand: number) {
+  let target: string;
+  target = listsCom[rand];
+  return target;
+}
+const Content = dynamic(() => import('./ui/playground'), {
+  loading: () => (
+    <div
+      className='grid place-content-center bg-white h-screen w-screen'
+    >
+      <p>loading...</p>
+    </div>),
   ssr: false,
-});
-
+})
 export default function Home() {
+  
   return <Content />;
 }

@@ -1,4 +1,3 @@
-import { GLTF, GLTFParser } from "three/examples/jsm/loaders/GLTFLoader.js";
 import * as Three from "three";
 import { user } from "./type";
 
