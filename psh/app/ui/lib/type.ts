@@ -1,6 +1,11 @@
 import * as Three from "three";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 
+export type cord = {
+  x: number;
+  y: number;
+}
+
 export type user = {
   gltf?: GLTF;
   name: string;

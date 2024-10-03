@@ -1,7 +1,7 @@
 import * as Three from "three";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { interval, keylist } from "./data";
-import { user } from "./type";
+import { ENDTOUCH, interval, keylist } from "./data";
+import { cord, user } from "./type";
 import {
   getGltfListKeys,
   gltfListGet,
@@ -9,11 +9,12 @@ import {
   userListGet,
 } from "./manageMap";
 
-let camera = new Three.PerspectiveCamera(75, 1, 0.1, 1000);
+let camera = new Three.PerspectiveCamera(75, 1, 0.1, 100);
 let scene = new Three.Scene();
-let renderer = new Three.WebGLRenderer();
+let renderer = new Three.WebGLRenderer({ antialias: true });
 let client: user;
 let setInit: React.Dispatch<React.SetStateAction<boolean>>;
+let touchCord: cord;
 
 const ambientLight = new Three.AmbientLight(0xffffff, 1);
 const directionalLight = new Three.DirectionalLight(0xffffff, 2);
@@ -32,19 +33,22 @@ export function initThree(
   newcamera: Three.PerspectiveCamera,
   newscene: Three.Scene,
   newclient: user,
-  newsetInit: React.Dispatch<React.SetStateAction<boolean>>
+  newsetInit: React.Dispatch<React.SetStateAction<boolean>>,
+  newtouchCord: cord
 ) {
   renderer = newrenderer;
   camera = newcamera;
   scene = newscene;
   client = newclient;
   setInit = newsetInit;
+  touchCord = newtouchCord;
 
   scene.background = new Three.Color(0xf0f0f0);
   directionalLight.position.set(5, 5, 5).normalize();
   camera.position.set(0, -30, 40);
   camera.lookAt(0, -5, 0);
   renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(window.devicePixelRatio);
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
 
@@ -65,7 +69,8 @@ export function startThree() {
         const deltaTime = time - lastTime;
         if (deltaTime > interval) {
           lastTime = time - (deltaTime % interval);
-          manageVelocity();
+          manageKeyVelocity();
+          manageTouchVelocity();
           managePosition(gltf, nameMesh);
           //여기까지는 클라 본인꺼 렌더링.
 
@@ -135,7 +140,7 @@ function createTextTexture(text: string, isMe: boolean) {
   return texture;
 }
 
-function manageVelocity() {
+function manageKeyVelocity() {
   if (keylist["ArrowUp"]) velocity.y += accel;
   if (keylist["ArrowDown"]) velocity.y -= accel;
   if (keylist["ArrowLeft"]) velocity.x -= accel;
@@ -162,4 +167,10 @@ function setPosition(gltf: GLTF, user: user, name: Three.Mesh) {
   gltf.scene.position.y = user.y;
   name.position.copy(gltf.scene.position);
   name.position.z = 3;
+}
+
+function manageTouchVelocity() {
+  if (touchCord.x == ENDTOUCH && touchCord.y == ENDTOUCH) return;
+  
+
 }

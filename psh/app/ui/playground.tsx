@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import * as Three from "three";
-import { cycle, listenerFunctions } from "./lib/data";
-import { gltfList, nameList, user, userList } from "./lib/type";
+import { cycle, ENDTOUCH, listenerFunctions } from "./lib/data";
+import { cord, gltfList, nameList, user, userList } from "./lib/type";
 import { initMap, updateMap } from "./lib/manageMap";
 import { initThree, startThree } from "./lib/manageThree";
 
@@ -16,6 +16,7 @@ export default function Playground() {
   const userList: userList = new Map();
   const gltfList: gltfList = new Map();
   const nameList: nameList = new Map();
+  const touchCord:cord = { x: ENDTOUCH, y: ENDTOUCH };
   initMap(userList, gltfList, nameList, username);
 
   const renderer = new Three.WebGLRenderer();
@@ -45,24 +46,31 @@ export default function Playground() {
       console.log("websocket disconnected");
     };
 
-    initThree(renderer, camera, scene, user, setInit);
+    initThree(renderer, camera, scene, user, setInit, touchCord);
 
     startThree();
 
     threeRef.current?.appendChild(renderer.domElement);
 
-    const { handleResize, keydownEvent, keyupEvent } = listenerFunctions(
+    const { handleResize, keydownEvent, keyupEvent, touchStart, touchMove, touchEnd } = listenerFunctions(
       renderer,
-      camera
+      camera,
+      touchCord
     );
     window.addEventListener("resize", handleResize);
     window.addEventListener("keydown", keydownEvent);
     window.addEventListener("keyup", keyupEvent);
+    window.addEventListener("touchstart", touchStart);
+    window.addEventListener("touchmove", touchMove);
+    window.addEventListener("touchend", touchEnd);
 
     return () => {
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("keydown", keydownEvent);
       window.removeEventListener("keyup", keyupEvent);
+      window.removeEventListener("touchstart", touchStart);
+      window.removeEventListener("touchmove", touchMove);
+      window.removeEventListener("touchend", touchEnd);
       renderer.dispose();
       threeRef.current?.removeChild(renderer.domElement);
       clearInterval(intervalId);
@@ -73,12 +81,12 @@ export default function Playground() {
   return (
     <>
       <div
-        className={`grid place-content-center bg-white h-screen w-screen ${init ? "hidden" : ""
+        className={`grid place-content-center bg-white h-screen ${init ? "hidden" : ""
           }`}
       >
         <p>loading...</p>
       </div>
-      <div ref={threeRef} className={`${init ? "" : "hidden"} h-screen`} />
+      <div ref={threeRef} className={`${init ? "" : "hidden"}`} />
     </>
   );
 }

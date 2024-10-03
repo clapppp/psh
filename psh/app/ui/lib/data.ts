@@ -1,12 +1,16 @@
 import * as Three from "three";
-import { user } from "./type";
+import { cord, user } from "./type";
+
+export const ENDTOUCH = 9999;
 
 export function listenerFunctions(
   renderer: Three.WebGLRenderer,
-  camera: Three.PerspectiveCamera
+  camera: Three.PerspectiveCamera,
+  touchCord: cord
 ) {
   const handleResize = () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
   };
@@ -23,7 +27,22 @@ export function listenerFunctions(
     }
   };
 
-  return { handleResize, keydownEvent, keyupEvent };
+  const touchStart = (event: TouchEvent) => {
+    touchCord.x = event.touches[0].clientX;
+    touchCord.y = event.touches[0].clientY;
+  }
+  
+  const touchMove = (event: TouchEvent) => {
+    touchCord.x = event.changedTouches[0].clientX;
+    touchCord.y = event.changedTouches[0].clientY;
+  }
+  
+  const touchEnd = (event: TouchEvent) => {
+    touchCord.x = ENDTOUCH;
+    touchCord.y = ENDTOUCH;
+  }
+
+  return { handleResize, keydownEvent, keyupEvent, touchStart, touchMove, touchEnd };
 }
 
 export const emptyUser: user = { name: "emptyUser", x: 0, y: 0 };

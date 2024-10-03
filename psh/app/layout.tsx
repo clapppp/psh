@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={GeistSans.className}>
+      <body className={`${GeistSans.className} overflow-hidden`}>
         <div className="pr-10 absolute -left-64 hover:left-0 ease-out duration-300">
           <NavBar />
         </div>
