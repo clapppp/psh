@@ -13,6 +13,8 @@ export function listenerFunctions(
     renderer.setPixelRatio(window.devicePixelRatio);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
+
+    document.documentElement.style.setProperty('--screenh', `${window.innerHeight}px`);
   };
 
   const keydownEvent = (event: KeyboardEvent) => {
@@ -28,11 +30,13 @@ export function listenerFunctions(
   };
 
   const touchStart = (event: TouchEvent) => {
+    event.preventDefault();
     touchCord.x = event.touches[0].clientX;
     touchCord.y = event.touches[0].clientY;
   }
   
   const touchMove = (event: TouchEvent) => {
+    event.preventDefault();
     touchCord.x = event.changedTouches[0].clientX;
     touchCord.y = event.changedTouches[0].clientY;
   }

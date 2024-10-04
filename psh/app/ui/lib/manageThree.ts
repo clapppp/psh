@@ -27,6 +27,7 @@ const accel = 0.01;
 const max = 0.2;
 const friction = 0.98;
 const loader = new GLTFLoader();
+const planeZ = new Three.Plane(new Three.Vector3(0, 0, 1), 0)
 
 export function initThree(
   newrenderer: Three.WebGLRenderer,
@@ -52,6 +53,8 @@ export function initThree(
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
 
+  document.documentElement.style.setProperty('--screenh', `${window.innerHeight}px`);
+
   addToScene(ambientLight, directionalLight, floor);
 }
 
@@ -70,7 +73,8 @@ export function startThree() {
         if (deltaTime > interval) {
           lastTime = time - (deltaTime % interval);
           manageKeyVelocity();
-          manageTouchVelocity();
+          manageTouchVelocity(gltf);
+          controlVelocity();
           managePosition(gltf, nameMesh);
           //여기까지는 클라 본인꺼 렌더링.
 
@@ -145,11 +149,20 @@ function manageKeyVelocity() {
   if (keylist["ArrowDown"]) velocity.y -= accel;
   if (keylist["ArrowLeft"]) velocity.x -= accel;
   if (keylist["ArrowRight"]) velocity.x += accel;
+}
 
+function manageTouchVelocity(gltf: GLTF) {
+  if (touchCord.x == ENDTOUCH && touchCord.y == ENDTOUCH) return;
+  const point: Three.Vector3 = convertToSceneCoordinates();
+  const direction: Three.Vector3 = new Three.Vector3().subVectors(point, gltf.scene.position);
+  velocity.x += direction.x > 0 ? accel : -accel
+  velocity.y += direction.y > 0 ? accel : -accel
+}
+
+function controlVelocity() {
   velocity.x = Math.min(Math.max(velocity.x, -max), max);
   velocity.y = Math.min(Math.max(velocity.y, -max), max);
   velocity.multiplyScalar(friction);
-  return;
 }
 
 function managePosition(gltf: GLTF, nameMesh: Three.Mesh) {
@@ -169,8 +182,16 @@ function setPosition(gltf: GLTF, user: user, name: Three.Mesh) {
   name.position.z = 3;
 }
 
-function manageTouchVelocity() {
-  if (touchCord.x == ENDTOUCH && touchCord.y == ENDTOUCH) return;
-  
+function convertToSceneCoordinates() {
+  const rect = renderer.domElement.getBoundingClientRect();
+  const ndcX = (touchCord.x / rect.width) * 2 - 1;
+  const ndcY = -(touchCord.y / rect.height) * 2 + 1;
+  const raycaster = new Three.Raycaster();
+  const pointer = new Three.Vector2(ndcX, ndcY);
+  raycaster.setFromCamera(pointer, camera);
 
+  const intersectPoint = new Three.Vector3();
+
+  raycaster.ray.intersectPlane(planeZ, intersectPoint);
+  return intersectPoint;
 }

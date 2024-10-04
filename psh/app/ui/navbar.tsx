@@ -8,7 +8,7 @@ const links: string[] = [
 export default function NavBar() {
 
     return (
-        <nav className="flex flex-col h-screen w-64 bg-slate-50 pt-5 ">
+        <nav className="flex flex-col custom-height w-64 bg-slate-50 pt-5 ">
             {
                 links.map((link) => {
                     return (

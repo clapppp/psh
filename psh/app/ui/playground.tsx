@@ -11,6 +11,7 @@ const username = "User_" + String(new Date().getTime()).substring(10);
 
 export default function Playground() {
   const threeRef = useRef<HTMLDivElement>(null);
+  const mySelf = useRef<HTMLDivElement>(null);
   const [init, setInit] = useState(false); //화면가리개
   const user: user = { name: username, x: 0, y: 0 };
   const userList: userList = new Map();
@@ -57,20 +58,21 @@ export default function Playground() {
       camera,
       touchCord
     );
+
     window.addEventListener("resize", handleResize);
     window.addEventListener("keydown", keydownEvent);
     window.addEventListener("keyup", keyupEvent);
-    window.addEventListener("touchstart", touchStart);
-    window.addEventListener("touchmove", touchMove);
-    window.addEventListener("touchend", touchEnd);
+    mySelf.current?.addEventListener("touchstart", touchStart);
+    mySelf.current?.addEventListener("touchmove", touchMove);
+    mySelf.current?.addEventListener("touchend", touchEnd);
 
     return () => {
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("keydown", keydownEvent);
       window.removeEventListener("keyup", keyupEvent);
-      window.removeEventListener("touchstart", touchStart);
-      window.removeEventListener("touchmove", touchMove);
-      window.removeEventListener("touchend", touchEnd);
+      mySelf.current?.removeEventListener("touchstart", touchStart);
+      mySelf.current?.removeEventListener("touchmove", touchMove);
+      mySelf.current?.removeEventListener("touchend", touchEnd);
       renderer.dispose();
       threeRef.current?.removeChild(renderer.domElement);
       clearInterval(intervalId);
@@ -79,7 +81,7 @@ export default function Playground() {
   }, []);
 
   return (
-    <>
+    <div ref={mySelf}>
       <div
         className={`grid place-content-center bg-white h-screen ${init ? "hidden" : ""
           }`}
@@ -87,6 +89,6 @@ export default function Playground() {
         <p>loading...</p>
       </div>
       <div ref={threeRef} className={`${init ? "" : "hidden"}`} />
-    </>
+    </div>
   );
 }
