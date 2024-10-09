@@ -29,6 +29,7 @@ export default function Playground() {
 
     const ws = new WebSocket(
       // "wss://solid-capybara-gp4qpq676v4hw654-3000.app.github.dev/api/socket"
+      // "ws://localhost:3000/api/socket"
       "ws://www.psh88.com/api/socket"
     );
 
