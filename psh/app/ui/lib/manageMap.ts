@@ -22,13 +22,8 @@ export function initMap(
 
 export function updateMap(event: MessageEvent<any>) {
   const updateMap = new Map<string, user>(JSON.parse(event.data));
-  console.log(updateMap);
   updateMap.forEach((value, key) => {
-    console.log(username);
-    if (key === username) {
-      console.log(key);
-      return; //본인은 관리 X
-    }
+    if (key === username) return; //본인은 관리 X
     if (!usersList.has(key)) addGltf(key, gltfsList); //처음 들어온 클라는 gltf에 추가
     usersList.set(key, value);
   }); //여기까지 받아온 데이터를 돌면서 처음들어온 클라, 기존 클라 업데이트 진행
