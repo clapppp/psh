@@ -17,7 +17,7 @@ export default function Playground() {
   const userList: userList = new Map();
   const gltfList: gltfList = new Map();
   const nameList: nameList = new Map();
-  const touchCord:cord = { x: ENDTOUCH, y: ENDTOUCH };
+  const touchCord: cord = { x: ENDTOUCH, y: ENDTOUCH };
   initMap(userList, gltfList, nameList, username);
 
   const renderer = new Three.WebGLRenderer();
@@ -28,8 +28,8 @@ export default function Playground() {
     let intervalId: NodeJS.Timeout;
 
     const ws = new WebSocket(
-      "wss://solid-capybara-gp4qpq676v4hw654-3000.app.github.dev/api/socket"
-      // "ws://34.47.112.250:3000/api/socket"
+      // "wss://solid-capybara-gp4qpq676v4hw654-3000.app.github.dev/api/socket"
+      "ws://www.psh88.com/api/socket"
     );
 
     ws.onopen = () => {
@@ -53,11 +53,14 @@ export default function Playground() {
 
     threeRef.current?.appendChild(renderer.domElement);
 
-    const { handleResize, keydownEvent, keyupEvent, touchStart, touchMove, touchEnd } = listenerFunctions(
-      renderer,
-      camera,
-      touchCord
-    );
+    const {
+      handleResize,
+      keydownEvent,
+      keyupEvent,
+      touchStart,
+      touchMove,
+      touchEnd,
+    } = listenerFunctions(renderer, camera, touchCord);
 
     window.addEventListener("resize", handleResize);
     window.addEventListener("keydown", keydownEvent);
@@ -83,8 +86,9 @@ export default function Playground() {
   return (
     <div ref={mySelf}>
       <div
-        className={`grid place-content-center bg-white h-screen ${init ? "hidden" : ""
-          }`}
+        className={`grid place-content-center bg-white h-screen ${
+          init ? "hidden" : ""
+        }`}
       >
         <p>loading...</p>
       </div>
