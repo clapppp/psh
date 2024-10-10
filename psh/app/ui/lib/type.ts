@@ -4,7 +4,7 @@ import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 export type cord = {
   x: number;
   y: number;
-}
+};
 
 export type user = {
   gltf?: GLTF;
@@ -16,3 +16,9 @@ export type user = {
 export type userList = Map<string, user>;
 export type gltfList = Map<string, GLTF>;
 export type nameList = Map<string, Three.Mesh>;
+
+export type card = {
+  date: Date;
+  issue: string;
+  solution: string;
+};

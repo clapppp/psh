@@ -93,7 +93,10 @@ export default function Playground() {
       >
         <p>loading...</p>
       </div>
-      <div ref={threeRef} className={`${init ? "" : "hidden"}`} />
+      <div
+        ref={threeRef}
+        className={`${init ? "" : "hidden"} overflow-hidden`}
+      />
     </div>
   );
 }
