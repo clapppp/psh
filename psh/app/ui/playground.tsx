@@ -2,35 +2,33 @@
 
 import { useEffect, useRef, useState } from "react";
 import * as Three from "three";
-import { cycle, ENDTOUCH, listenerFunctions } from "./lib/data";
-import { cord, gltfList, nameList, user, userList } from "./lib/type";
-import { initMap, updateMap } from "./lib/manageMap";
-import { initThree, startThree } from "./lib/manageThree";
+import { addListenerFunctions, cycle, ENDTOUCH, removeListenerFunctions } from "./lib/data";
+import { cord, gltfListType, nameListType, userType, userListType } from "./lib/type";
+import { updateMap } from "./lib/manageMap";
+import { startThree } from "./lib/manageThree";
 
-const username = "User_" + String(new Date().getTime()).substring(10);
+export const userList: userListType = new Map();
+export const gltfList: gltfListType = new Map();
+export const nameList: nameListType = new Map();
+export const username = "User_" + String(new Date().getTime()).substring(10);
+export const user: userType = { name: username, x: 0, y: 0 };
 
 export default function Playground() {
   const threeRef = useRef<HTMLDivElement>(null);
   const mySelf = useRef<HTMLDivElement>(null);
   const [init, setInit] = useState(false); //화면가리개
-  const user: user = { name: username, x: 0, y: 0 };
-  const userList: userList = new Map();
-  const gltfList: gltfList = new Map();
-  const nameList: nameList = new Map();
   const touchCord: cord = { x: ENDTOUCH, y: ENDTOUCH };
-  initMap(userList, gltfList, nameList, username);
-
   const renderer = new Three.WebGLRenderer();
   const camera = new Three.PerspectiveCamera();
-  const scene = new Three.Scene();
+  let isRunning = true;
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
 
     const ws = new WebSocket(
-      // "wss://solid-capybara-gp4qpq676v4hw654-3000.app.github.dev/api/socket"
+      "wss://solid-capybara-gp4qpq676v4hw654-3000.app.github.dev/api/socket"
       // "ws://localhost:3000/api/socket"
-      "ws://www.psh88.com/api/socket"
+      // "ws://www.psh88.com/api/socket"
     );
 
     ws.onopen = () => {
@@ -48,37 +46,16 @@ export default function Playground() {
       console.log("websocket disconnected");
     };
 
-    initThree(renderer, camera, scene, user, setInit, touchCord);
-
-    startThree();
+    startThree(renderer, camera, setInit, touchCord, isRunning);
 
     threeRef.current?.appendChild(renderer.domElement);
 
-    const {
-      handleResize,
-      keydownEvent,
-      keyupEvent,
-      touchStart,
-      touchMove,
-      touchEnd,
-    } = listenerFunctions(renderer, camera, touchCord);
-
-    window.addEventListener("resize", handleResize);
-    window.addEventListener("keydown", keydownEvent);
-    window.addEventListener("keyup", keyupEvent);
-    mySelf.current?.addEventListener("touchstart", touchStart);
-    mySelf.current?.addEventListener("touchmove", touchMove);
-    mySelf.current?.addEventListener("touchend", touchEnd);
+    addListenerFunctions(renderer, camera, touchCord, window, mySelf);
 
     return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("keydown", keydownEvent);
-      window.removeEventListener("keyup", keyupEvent);
-      mySelf.current?.removeEventListener("touchstart", touchStart);
-      mySelf.current?.removeEventListener("touchmove", touchMove);
-      mySelf.current?.removeEventListener("touchend", touchEnd);
+      isRunning = false;
+      removeListenerFunctions(window, mySelf);
       renderer.dispose();
-      threeRef.current?.removeChild(renderer.domElement);
       clearInterval(intervalId);
       ws.close();
     };
@@ -87,9 +64,8 @@ export default function Playground() {
   return (
     <div ref={mySelf}>
       <div
-        className={`grid place-content-center bg-white h-screen ${
-          init ? "hidden" : ""
-        }`}
+        className={`grid place-content-center bg-white h-screen ${init ? "hidden" : ""
+          }`}
       >
         <p>loading...</p>
       </div>

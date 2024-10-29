@@ -1,55 +1,74 @@
 import * as Three from "three";
-import { cord, user } from "./type";
+import { cord, handleResizeType, keydownEventType, keyupEventType, touchEndType, touchMoveType, touchStartType, userType } from "./type";
+import { RefObject } from "react";
 
 export const ENDTOUCH = 9999;
 
-export function listenerFunctions(
+let handleResize: handleResizeType;
+let keydownEvent: keydownEventType;  
+let keyupEvent: keyupEventType;
+let touchStart: touchStartType;
+let touchMove: touchMoveType;
+let touchEnd: touchEndType;
+
+export function addListenerFunctions(
   renderer: Three.WebGLRenderer,
   camera: Three.PerspectiveCamera,
-  touchCord: cord
+  touchCord: cord,
+  window: Window,
+  mySelf: RefObject<HTMLDivElement>
 ) {
-  const handleResize = () => {
+  handleResize = () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-
     document.documentElement.style.setProperty('--screenh', `${window.innerHeight}px`);
   };
 
-  const keydownEvent = (event: KeyboardEvent) => {
-    if (event.key in keylist) {
-      keylist[event.key] = true;
-    }
+  keydownEvent = (event) => {
+    if (event.key in keylist) keylist[event.key] = true;
   };
 
-  const keyupEvent = (event: KeyboardEvent) => {
-    if (event.key in keylist) {
-      keylist[event.key] = false;
-    }
+  keyupEvent = (event) => {
+    if (event.key in keylist) keylist[event.key] = false;
   };
 
-  const touchStart = (event: TouchEvent) => {
+  touchStart = (event) => {
     event.preventDefault();
     touchCord.x = event.touches[0].clientX;
     touchCord.y = event.touches[0].clientY;
   }
-  
-  const touchMove = (event: TouchEvent) => {
+
+  touchMove = (event) => {
     event.preventDefault();
     touchCord.x = event.changedTouches[0].clientX;
     touchCord.y = event.changedTouches[0].clientY;
   }
-  
-  const touchEnd = (event: TouchEvent) => {
+
+  touchEnd = (event) => {
     touchCord.x = ENDTOUCH;
     touchCord.y = ENDTOUCH;
   }
 
-  return { handleResize, keydownEvent, keyupEvent, touchStart, touchMove, touchEnd };
+  window.addEventListener("resize", handleResize);
+  window.addEventListener("keydown", keydownEvent);
+  window.addEventListener("keyup", keyupEvent);
+  mySelf.current?.addEventListener("touchstart", touchStart);
+  mySelf.current?.addEventListener("touchmove", touchMove);
+  mySelf.current?.addEventListener("touchend", touchEnd);
 }
 
-export const emptyUser: user = { name: "emptyUser", x: 0, y: 0 };
+export function removeListenerFunctions(window: Window, mySelf: RefObject<HTMLDivElement>) {
+  window.addEventListener("resize", handleResize);
+  window.addEventListener("keydown", keydownEvent);
+  window.addEventListener("keyup", keyupEvent);
+  mySelf.current?.addEventListener("touchstart", touchStart);
+  mySelf.current?.addEventListener("touchmove", touchMove);
+  mySelf.current?.addEventListener("touchend", touchEnd);
+}
+
+export const emptyUser: userType = { name: "emptyUser", x: 0, y: 0 };
 
 export const emptyName: Three.Mesh = new Three.Mesh();
 

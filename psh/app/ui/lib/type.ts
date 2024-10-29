@@ -6,16 +6,25 @@ export type cord = {
   y: number;
 };
 
-export type user = {
+export type userType = {
   gltf?: GLTF;
   name: string;
   x: number;
   y: number;
 };
 
-export type userList = Map<string, user>;
-export type gltfList = Map<string, GLTF>;
-export type nameList = Map<string, Three.Mesh>;
+export type userListType = Map<string, userType>;
+export type gltfListType = Map<string, GLTF>;
+export type nameListType = Map<string, Three.Mesh>;
+
+export type handleResizeType = () => void;
+export type keydownEventType = (arg: KeyboardEvent) => void;
+export type keyupEventType = (arg: KeyboardEvent) => void;
+export type touchStartType = (arg: TouchEvent) => void;
+export type touchMoveType = (arg: TouchEvent) => void;
+export type touchEndType = (arg: TouchEvent) => void;
+
+
 
 export type card = {
   date: Date;

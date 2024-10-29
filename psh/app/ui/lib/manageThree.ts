@@ -1,21 +1,15 @@
 import * as Three from "three";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { ENDTOUCH, interval, keylist } from "./data";
-import { cord, user } from "./type";
-import {
-  getGltfListKeys,
-  gltfListGet,
-  nameListGet,
-  userListGet,
-} from "./manageMap";
+import { cord, userType } from "./type";
+import { nameList, userList, gltfList, user } from "../playground";
 
-let camera = new Three.PerspectiveCamera(75, 1, 0.1, 100);
-let scene = new Three.Scene();
-let renderer = new Three.WebGLRenderer({ antialias: true });
-let client: user;
+let camera: Three.PerspectiveCamera;
+let renderer: Three.WebGLRenderer;
 let setInit: React.Dispatch<React.SetStateAction<boolean>>;
 let touchCord: cord;
 
+const scene = new Three.Scene();
 const ambientLight = new Three.AmbientLight(0xffffff, 1);
 const directionalLight = new Three.DirectionalLight(0xffffff, 2);
 const floor = new Three.Mesh(
@@ -29,18 +23,15 @@ const friction = 0.98;
 const loader = new GLTFLoader();
 const planeZ = new Three.Plane(new Three.Vector3(0, 0, 1), 0)
 
-export function initThree(
+export function startThree(
   newrenderer: Three.WebGLRenderer,
   newcamera: Three.PerspectiveCamera,
-  newscene: Three.Scene,
-  newclient: user,
   newsetInit: React.Dispatch<React.SetStateAction<boolean>>,
-  newtouchCord: cord
+  newtouchCord: cord,
+  isRunning: boolean
 ) {
   renderer = newrenderer;
   camera = newcamera;
-  scene = newscene;
-  client = newclient;
   setInit = newsetInit;
   touchCord = newtouchCord;
 
@@ -52,42 +43,42 @@ export function initThree(
   renderer.setPixelRatio(window.devicePixelRatio);
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
-
   document.documentElement.style.setProperty('--screenh', `${window.innerHeight}px`);
-
   addToScene(ambientLight, directionalLight, floor);
+
+  start(isRunning);
 }
 
-export function startThree() {
+function start(isRunning: boolean) {
   let lastTime = 0;
 
   loader.load(
     "/model/scene.gltf",
     function (gltf) {
-      const nameMesh = createMesh(client.name, true);
+      const nameMesh = createMesh(user.name, true);
       addToScene(gltf.scene, nameMesh);
-      function animate(time: DOMHighResTimeStamp) {
+      console.log("add myself");
+      function animate() {
+        if (!isRunning) return;
         requestAnimationFrame(animate);
 
-        const deltaTime = time - lastTime;
-        if (deltaTime > interval) {
-          lastTime = time - (deltaTime % interval);
-          manageKeyVelocity();
-          manageTouchVelocity(gltf);
-          controlVelocity();
-          managePosition(gltf, nameMesh);
-          //여기까지는 클라 본인꺼 렌더링.
+        manageKeyVelocity();
+        manageTouchVelocity(gltf);
+        controlVelocity();
+        managePosition(gltf, nameMesh);
+        //여기까지는 클라 본인꺼 렌더링.
 
-          //여기부터는 다른유저들.
-          for (const name of getGltfListKeys()) {
-            const gltf = gltfListGet(name);
-            const user = userListGet(name);
-            const nameMesh = nameListGet(name);
-            if (gltf) setPosition(gltf, user, nameMesh);
-          }
-
-          renderer.render(scene, camera);
+        //여기부터는 다른유저들.
+        for (const name of userList.keys()) {
+          const gltf = gltfList.get(name);
+          const user = userList.get(name);
+          const nameMesh = nameList.get(name);
+          if (gltf && user && nameMesh) setPosition(gltf, user, nameMesh);
         }
+
+        renderer.render(scene, camera);
+        console.log(scene.children);
+        console.log("gltflists 이름 키들 : ", gltfList.keys());
       }
       requestAnimationFrame(animate);
     },
@@ -171,11 +162,11 @@ function managePosition(gltf: GLTF, nameMesh: Three.Mesh) {
   gltf.scene.position.y = Math.min(Math.max(gltf.scene.position.y, -15), 15);
   nameMesh.position.copy(gltf.scene.position);
   nameMesh.position.z = 3;
-  client.x = gltf.scene.position.x;
-  client.y = gltf.scene.position.y;
+  user.x = gltf.scene.position.x;
+  user.y = gltf.scene.position.y;
 }
 
-function setPosition(gltf: GLTF, user: user, name: Three.Mesh) {
+function setPosition(gltf: GLTF, user: userType, name: Three.Mesh) {
   gltf.scene.position.x = user.x;
   gltf.scene.position.y = user.y;
   name.position.copy(gltf.scene.position);

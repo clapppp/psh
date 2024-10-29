@@ -1,69 +1,57 @@
-import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { gltfList, nameList, user, userList } from "./type";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { addToScene, createMesh, removeFromScene } from "./manageThree";
 import { emptyName, emptyUser } from "./data";
-
-let usersList: userList;
-let gltfsList: gltfList;
-let namesList: nameList;
-let username: string;
-
-export function initMap(
-  uList: userList,
-  gList: gltfList,
-  nList: nameList,
-  name: string
-) {
-  usersList = uList;
-  gltfsList = gList;
-  namesList = nList;
-  username = name;
-}
+import { nameList, userList, gltfList, username } from "../playground";
+import { userType } from "./type";
 
 export function updateMap(event: MessageEvent<any>) {
-  const updateMap = new Map<string, user>(JSON.parse(event.data));
+  const updateMap = new Map<string, userType>(JSON.parse(event.data));
+
   updateMap.forEach((value, key) => {
-    if (key === username) return; //본인은 관리 X
-    if (!usersList.has(key)) addGltf(key, gltfsList); //처음 들어온 클라는 gltf에 추가
-    usersList.set(key, value);
-  }); //여기까지 받아온 데이터를 돌면서 처음들어온 클라, 기존 클라 업데이트 진행
+    if (key === username) return;           //본인은 관리 X
+    if (!userList.has(key)) {
+      userList.set(key, value);
+      addGltf(key);                         //처음 들어온 클라는 gltf에 추가
+    }
+    userList.set(key, value);
+  });                                       //여기까지 받아온 데이터를 돌면서 처음들어온 클라, 기존 클라 업데이트 진행
 
   removeUser(updateMap);
 }
 
 export function getGltfListKeys() {
-  return gltfsList.keys();
+  return gltfList.keys();
 }
 export function gltfListGet(name: string) {
-  return gltfsList.get(name);
+  return gltfList.get(name);
 }
 export function userListGet(name: string) {
-  return usersList.get(name) ?? emptyUser;
+  return userList.get(name) ?? emptyUser;
 }
 export function nameListGet(name: string) {
-  return namesList.get(name) ?? emptyName;
+  return nameList.get(name) ?? emptyName;
 }
 
-function removeUser(updateMap: Map<string, user>) {
+function removeUser(updateMap: Map<string, userType>) {
   //여기부턴 업데이트한 리스트 돌면서 없는 유저 렌더링 지우기.
-  usersList.forEach((value, key) => {
+  userList.forEach((value, key) => {
     if (!updateMap.has(key)) {
-      usersList.delete(key);
-      const gltfToRemove = gltfsList.get(key)?.scene;
-      gltfsList.delete(key);
-      const name = namesList.get(key);
-      namesList.delete(key);
+      userList.delete(key);
+      const gltfToRemove = gltfList.get(key)?.scene;
+      gltfList.delete(key);
+      const name = nameList.get(key);
+      nameList.delete(key);
       if (gltfToRemove && name) removeFromScene(gltfToRemove, name);
     }
   });
 }
 
-function addGltf(key: string, gltfList: Map<string, GLTF>) {
+async function addGltf(key: string) {
+  const nameMesh = createMesh(key, false);
+  nameList.set(key, nameMesh);
   const loader = new GLTFLoader();
   loader.load("/model/scene.gltf", function (gltf) {
-    const mesh = createMesh(key, false);
-    namesList.set(key, mesh);
     gltfList.set(key, gltf);
-    addToScene(gltf.scene, mesh);
+    addToScene(gltf.scene, nameMesh);
   });
 }
