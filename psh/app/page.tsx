@@ -27,11 +27,10 @@ const Content = dynamic(() => import('./ui/playground'), {
     <div
       className='grid place-content-center bg-white h-screen w-screen'
     >
-      <p>loading...</p>
+      <p>loading....</p>
     </div>),
   ssr: false,
 })
 export default function Home() {
-  
   return <Content />;
 }

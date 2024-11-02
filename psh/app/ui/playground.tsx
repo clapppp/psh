@@ -2,10 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import * as Three from "three";
-import { addListenerFunctions, cycle, ENDTOUCH, removeListenerFunctions } from "./lib/data";
-import { cord, gltfListType, nameListType, userType, userListType } from "./lib/type";
-import { updateMap } from "./lib/manageMap";
-import { startThree } from "./lib/manageThree";
+import { addListenerFunctions, cycle, ENDTOUCH, removeListenerFunctions } from "../../lib/data";
+import { cord, gltfListType, nameListType, userType, userListType } from "../../lib/type";
+import { updateMap } from "../../lib/manageMap";
+import { startRendering, startThree, stopRendering } from "../../lib/manageThree";
 
 export const userList: userListType = new Map();
 export const gltfList: gltfListType = new Map();
@@ -20,9 +20,10 @@ export default function Playground() {
   const touchCord: cord = { x: ENDTOUCH, y: ENDTOUCH };
   const renderer = new Three.WebGLRenderer();
   const camera = new Three.PerspectiveCamera();
-  let isRunning = true;
 
   useEffect(() => {
+    startRendering();
+
     let intervalId: NodeJS.Timeout;
 
     const ws = new WebSocket(
@@ -46,18 +47,18 @@ export default function Playground() {
       console.log("websocket disconnected");
     };
 
-    startThree(renderer, camera, setInit, touchCord, isRunning);
+    startThree(renderer, camera, setInit, touchCord);
 
     threeRef.current?.appendChild(renderer.domElement);
 
     addListenerFunctions(renderer, camera, touchCord, window, mySelf);
 
     return () => {
-      isRunning = false;
       removeListenerFunctions(window, mySelf);
       renderer.dispose();
       clearInterval(intervalId);
       ws.close();
+      stopRendering();
     };
   }, []);
 
