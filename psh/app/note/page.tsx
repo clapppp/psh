@@ -1,8 +1,11 @@
 'use client'
+import { setScreenHeight } from "@/lib/data";
 import { useEffect } from "react";
 
 export default function NoteComponent() {
     useEffect(() => {
+        setScreenHeight(window);
+
         async function solve() {
             try {
                 const data = await fetch('/api/note');

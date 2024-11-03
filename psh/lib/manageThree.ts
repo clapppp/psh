@@ -56,10 +56,8 @@ function start() {
       const nameMesh = createMesh(user.name, true);
       addToScene(gltf.scene, nameMesh);
       function animate() {
-        console.log('isrunning : ', isRunning);
         if (!isRunning) {
           removeFromScene(gltf.scene, nameMesh);
-          console.log('///////stoped!!!!!!!');
           return;
         }
         requestAnimationFrame(animate);
@@ -79,7 +77,6 @@ function start() {
         }
 
         renderer.render(scene, camera);
-        console.log('render');
       }
       requestAnimationFrame(animate);
     },

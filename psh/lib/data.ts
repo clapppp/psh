@@ -5,11 +5,15 @@ import { RefObject } from "react";
 export const ENDTOUCH = 9999;
 
 let handleResize: handleResizeType;
-let keydownEvent: keydownEventType;  
+let keydownEvent: keydownEventType;
 let keyupEvent: keyupEventType;
 let touchStart: touchStartType;
 let touchMove: touchMoveType;
 let touchEnd: touchEndType;
+
+export function setScreenHeight(window: Window) {
+  document.documentElement.style.setProperty('--screenh', `${window.innerHeight}px`);
+}
 
 export function addListenerFunctions(
   renderer: Three.WebGLRenderer,
@@ -23,7 +27,6 @@ export function addListenerFunctions(
     renderer.setPixelRatio(window.devicePixelRatio);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-    document.documentElement.style.setProperty('--screenh', `${window.innerHeight}px`);
   };
 
   keydownEvent = (event) => {

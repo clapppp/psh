@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import * as Three from "three";
-import { addListenerFunctions, cycle, ENDTOUCH, removeListenerFunctions } from "../../lib/data";
+import { addListenerFunctions, cycle, ENDTOUCH, removeListenerFunctions, setScreenHeight } from "../../lib/data";
 import { cord, gltfListType, nameListType, userType, userListType } from "../../lib/type";
 import { updateMap } from "../../lib/manageMap";
 import { startRendering, startThree, stopRendering } from "../../lib/manageThree";
@@ -52,6 +52,7 @@ export default function Playground() {
     threeRef.current?.appendChild(renderer.domElement);
 
     addListenerFunctions(renderer, camera, touchCord, window, mySelf);
+    setScreenHeight(window);
 
     return () => {
       removeListenerFunctions(window, mySelf);
