@@ -1,25 +1,18 @@
-'use client'
-import { setScreenHeight } from "@/lib/data";
-import { useEffect } from "react";
+import NoteContent from "./ui/notecontent";
+import SearchBar from "./ui/searchbar";
+import AddButton from "./ui/addbutton";
+import { getData } from "@/lib/dataFetch";
+import { errorData } from "@/lib/data";
 
-export default function NoteComponent() {
-    useEffect(() => {
-        setScreenHeight(window);
-
-        async function solve() {
-            try {
-                const data = await fetch('/api/note');
-                const response = data.json();
-                console.log(response);
-            } catch (error) {
-                console.log(error);
-            }
-        }
-        solve();
-    }, [])
+export default async function NotePage() {
+    const contents = await getData();
     return (
-        <div>
-            that is sql result;
+        <div className="flex flex-col w-1/3 mx-auto mt-10 gap-4">
+            <div className="flex flex-row h-9">
+                <SearchBar />
+                <AddButton />
+            </div>
+            <NoteContent contents={contents ?? [errorData]} />
         </div>
     )
 }

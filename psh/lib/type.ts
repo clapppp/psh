@@ -24,10 +24,15 @@ export type touchStartType = (arg: TouchEvent) => void;
 export type touchMoveType = (arg: TouchEvent) => void;
 export type touchEndType = (arg: TouchEvent) => void;
 
-
-
 export type card = {
   date: Date;
   issue: string;
   solution: string;
 };
+
+export type noteContent = {
+  content: string,
+  datetime: string,
+  id: number,
+  title: string
+}

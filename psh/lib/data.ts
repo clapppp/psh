@@ -1,5 +1,5 @@
 import * as Three from "three";
-import { cord, handleResizeType, keydownEventType, keyupEventType, touchEndType, touchMoveType, touchStartType, userType } from "./type";
+import { cord, handleResizeType, keydownEventType, keyupEventType, noteContent, touchEndType, touchMoveType, touchStartType, userType } from "./type";
 import { RefObject } from "react";
 
 export const ENDTOUCH = 9999;
@@ -87,3 +87,10 @@ export const frame = 60;
 export const interval = 1000 / frame;
 export const divideFrame = 2;
 export const cycle = interval * divideFrame;
+
+export const errorData: noteContent = {
+  content: "error",
+  datetime: "",
+  id: 0,
+  title: "error"
+} 

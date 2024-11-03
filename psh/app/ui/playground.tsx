@@ -52,7 +52,6 @@ export default function Playground() {
     threeRef.current?.appendChild(renderer.domElement);
 
     addListenerFunctions(renderer, camera, touchCord, window, mySelf);
-    setScreenHeight(window);
 
     return () => {
       removeListenerFunctions(window, mySelf);
