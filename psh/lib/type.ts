@@ -32,7 +32,7 @@ export type card = {
 
 export type noteContent = {
   content: string,
-  datetime: string,
-  id: number,
+  datetime?: string,
+  id?: number,
   title: string
 }

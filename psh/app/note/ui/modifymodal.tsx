@@ -1,14 +1,17 @@
 'use client'
 import { noteContent } from "@/lib/type";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
-import { FaRegPaperPlane } from "react-icons/fa6";
 
 export default function ModifyModal({ content }: { content: noteContent }) {
     const [data, setData] = useState({
         title: content.title,
         content: content.content
     });
+
+    useEffect(() => {
+        setData(content);
+    },[content.content])
     function handleChange(e: ChangeEvent<HTMLTextAreaElement>) {
 
     }

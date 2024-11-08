@@ -1,5 +1,5 @@
 'use client'
-import { postData } from "@/lib/dataFetch";
+import { postData } from "@/lib/fromBackFetch";
 import { ChangeEvent, useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { FaRegPaperPlane } from "react-icons/fa6";
