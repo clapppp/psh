@@ -1,34 +1,24 @@
 import dynamic from "next/dynamic";
+import Loading from "./loading";
 
-const listsCom = [
+const components = [
   "./ui/playground",
   "./ui/playground",
   "./ui/playground",
   "./ui/playground",
   "./ui/playground",
-  "./ui/cosmos",
-];
-const listsMob = [
-  "./ui/cosmos",
-  "./ui/cosmos",
-  "./ui/cosmos",
-  "./ui/cosmos",
-  "./ui/cosmos",
   "./ui/cosmos",
 ];
 
 function importTarget(rand: number) {
   let target: string;
-  target = listsCom[rand];
+  target = components[rand];
   return target;
 }
+
 const Content = dynamic(() => import('./ui/playground'), {
   loading: () => (
-    <div
-      className='grid place-content-center bg-white h-screen w-screen'
-    >
-      <p>loading....</p>
-    </div>),
+    <Loading />),
   ssr: false,
 })
 export default function Home() {

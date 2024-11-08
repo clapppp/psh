@@ -1,22 +1,27 @@
 'use client'
+import { putData } from "@/lib/fromFrontFetch";
 import { noteContent } from "@/lib/type";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, Dispatch, FormEvent, SetStateAction, useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
 
-export default function ModifyModal({ content }: { content: noteContent }) {
-    const [data, setData] = useState({
+export default function ModifyModal({ content, setModifyVisible }: { content: noteContent, setModifyVisible: Dispatch<SetStateAction<boolean>> }) {
+    const [data, setData] = useState<noteContent>({
         title: content.title,
         content: content.content
     });
 
-    useEffect(() => {
-        setData(content);
-    },[content.content])
+    useEffect(() => setData(content), [content.content]);
+
     function handleChange(e: ChangeEvent<HTMLTextAreaElement>) {
-
+        setData(prev => ({
+            ...prev,
+            [e.target.id]: e.target.value
+        }))
     }
-    function handleSubmit() {
-
+    function handleSubmit(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        putData(data);
+        setModifyVisible(false);
     }
     return (
         <form onSubmit={handleSubmit} className="bg-slate-100 rounded-lg p-4 pb-2">

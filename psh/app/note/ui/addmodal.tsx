@@ -1,12 +1,12 @@
 'use client'
 import { postData } from "@/lib/fromFrontFetch";
 import { noteContent } from "@/lib/type";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, Dispatch, FormEvent, SetStateAction, useState } from "react";
 import { FaRegPaperPlane } from "react-icons/fa6";
 
 //서버에서 받아들일때 필요하기때문에 content type application json은 필수
 
-export default function AddModal() {
+export default function AddModal({ setVisible }: { setVisible: Dispatch<SetStateAction<boolean>> }) {
     const [data, setData] = useState<noteContent>({
         title: '',
         content: ''
@@ -16,12 +16,11 @@ export default function AddModal() {
             ...prev,
             [e.target.name]: e.target.value
         }));
-        console.log(data);
     }
     function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         postData(data);
-        console.log('post finished');
+        setVisible(false);
     }
     return (
         <form onSubmit={handleSubmit} className="bg-slate-100 rounded-lg p-4 pb-2">

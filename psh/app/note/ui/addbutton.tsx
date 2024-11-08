@@ -14,7 +14,7 @@ export default function AddButton() {
             
             <div onClick={() => setVisible(false)} className={`${visible ? 'opacity-100' : 'opacity-0 pointer-events-none'} transition-all fixed top-0 left-0 right-0 bottom-0 backdrop-blur-sm`} />
             <div className={`${visible ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'} transition-all fixed top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2`}>
-                <AddModal />
+                <AddModal setVisible={setVisible} />
             </div>
         </>
     )

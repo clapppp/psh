@@ -9,17 +9,21 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-    const { title, content } : noteContent = await req.json();
+    const { title, content }: noteContent = await req.json();
     const sql = `INSERT INTO members (title, content) VALUES ('${title}', '${content}')`;
     return query(sql);
 }
 
-export async function PUT() {
-
+export async function PUT(req: Request) {
+    const { title, content, id }: noteContent = await req.json();
+    const sql = `UPDATE members SET title = '${title}', content = '${content}' WHERE id = ${id}`;
+    return query(sql);
 }
 
-export async function DELETE() {
-
+export async function DELETE(req: Request) {
+    const { id } = await req.json();
+    const sql = `DELETE FROM members WHERE id = ${id}`;
+    return query(sql);
 }
 
 async function query(sql: string) {
