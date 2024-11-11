@@ -29,12 +29,12 @@ export default function NoteContent() {
 
     return (
         <>
-            {contents?.map((content,index) => {
+            {contents?.map((content, index) => {
                 return (
                     <div className="border rounded-lg" key={index}>
 
-                        <p className="m-2">{content.title}</p>
-                        <p className="m-2">{content.content}</p>
+                        <p className="m-2 whitespace-pre-wrap">{content.title}</p>
+                        <p className="m-2 whitespace-pre-wrap font-light">{content.content}</p>
 
                         <div className="h-6">
 
@@ -45,7 +45,7 @@ export default function NoteContent() {
                             <button onClick={() => {
                                 setDeleteVisible(true);
                                 setDeleteContent(content);
-                             }} className="h-6 rounded-br-lg hover:bg-slate-300 w-1/2 transition-all"><FaTrash className="mx-auto" /></button>
+                            }} className="h-6 rounded-br-lg hover:bg-slate-300 w-1/2 transition-all"><FaTrash className="mx-auto" /></button>
 
                         </div>
                     </div>
