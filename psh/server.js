@@ -16,9 +16,10 @@ app.prepare().then(() => {
     handle(req, res, parsedUrl);
   });
 
-  const wss = new WebSocketServer({ server, path: "/api/socket" });
+  const wssPlay = new WebSocketServer({ noServer: true });
+  const wssChat = new WebSocketServer({ noServer: true });
 
-  wss.on("connection", (ws) => {
+  wssPlay.on("connection", (ws) => {
     console.log("new client connected");
 
     ws.on("message", (message) => {
@@ -41,11 +42,36 @@ app.prepare().then(() => {
     });
 
     const interval = setInterval(() => {
-      wss.clients.forEach((client) => {
+      wssPlay.clients.forEach((client) => {
         const sendArray = Array.from(userList.entries());
         client.send(JSON.stringify(sendArray));
       }); //Map => iterable => array => Json 으로 보냄
     }, cycle);
+  });
+
+  wssChat.on("connection", (ws) => {
+    console.log('chat client is connected');
+
+    ws.on('message', (message) => {
+      const data = JSON.parse(message);
+      wssChat.clients.forEach((client) => client.send(JSON.stringify(data)));
+    })
+  })
+
+  server.on("upgrade", (request, socket, head) => {
+    const { pathname } = parse(request.url);
+
+    if (pathname === "/api/socket") {
+      wssPlay.handleUpgrade(request, socket, head, (ws) => {
+        wssPlay.emit("connection", ws, request);
+      });
+    } else if (pathname === "/api/chat") {
+      wssChat.handleUpgrade(request, socket, head, (ws) => {
+        wssChat.emit("connection", ws, request);
+      });
+    } else {
+      socket.destroy(); // 잘못된 경로는 연결 거부
+    }
   });
 
   server.listen(3000, (err) => {

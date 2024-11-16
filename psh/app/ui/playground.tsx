@@ -6,6 +6,7 @@ import { addListenerFunctions, cycle, ENDTOUCH, removeListenerFunctions, setScre
 import { cord, gltfListType, nameListType, userType, userListType } from "../../lib/type";
 import { updateMap } from "../../lib/manageMap";
 import { startRendering, startThree, stopRendering } from "../../lib/manageThree";
+import Chat from "./chat";
 
 export const userList: userListType = new Map();
 export const gltfList: gltfListType = new Map();
@@ -65,14 +66,17 @@ export default function Playground() {
   return (
     <div ref={mySelf}>
       <div
-        className={`grid place-content-center bg-white h-screen ${init ? "hidden" : ""
+        className={`grid place-content-center bg-white h-dvh ${init ? "hidden" : ""
           }`}
       >
         <p>loading...</p>
       </div>
+      <div className="fixed z-10 right-2 top-2">
+        <Chat />
+      </div>
       <div
         ref={threeRef}
-        className={`${init ? "" : "hidden"} overflow-hidden`}
+        className='overflow-hidden'
       />
     </div>
   );
