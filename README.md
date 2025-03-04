@@ -6,6 +6,6 @@
     그래픽 렌더링은 three.js
     css는 tailwind
 
-    ~~배포는 gcp compute engine~
-    ~node 서버는 nginx 위에서 실행중~
-    ~도메인 www.psh88.com   gcp cloud domain 사용~~
+    ~~배포는 gcp compute engine
+    node 서버는 nginx 위에서 실행중
+    도메인 www.psh88.com   gcp cloud domain 사용~~
