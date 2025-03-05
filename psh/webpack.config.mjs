@@ -1,8 +1,8 @@
-module.exports = {
+export default {
     module: {
         rules: [
             {
-                test: /\.(glb|gltf)$/,
+                test: /\.gltf$/,
                 use: [
                     {
                         loader: 'file-loader',
@@ -12,7 +12,6 @@ module.exports = {
                     },
                 ],
             },
-            // 다른 로더 설정들...
         ],
     },
 };
