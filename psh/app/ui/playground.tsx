@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import * as Three from "three";
-import { addListenerFunctions, cycle, ENDTOUCH, removeListenerFunctions, setScreenHeight } from "../../lib/data";
+import { addListenerFunctions, cycle, ENDTOUCH, removeListenerFunctions} from "../../lib/data";
 import { cord, gltfListType, nameListType, userType, userListType } from "../../lib/type";
 import { updateMap } from "../../lib/manageMap";
 import { startRendering, startThree, stopRendering } from "../../lib/manageThree";
@@ -26,7 +26,7 @@ export default function Playground() {
     startRendering();
 
     let intervalId: NodeJS.Timeout;
-
+    
     const wsUrl = `wss://${window.location.host}/api/play`;
     const ws = new WebSocket(wsUrl);
 

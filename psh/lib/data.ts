@@ -11,9 +11,6 @@ let touchStart: touchStartType;
 let touchMove: touchMoveType;
 let touchEnd: touchEndType;
 
-export function setScreenHeight(window: Window) {
-  document.documentElement.style.setProperty('--screenh', `${window.innerHeight}px`);
-}
 
 export function addListenerFunctions(
   renderer: Three.WebGLRenderer,
