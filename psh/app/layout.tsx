@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode;//children은 같은디렉토리의 page파일
 }>) {
   return (
     <html lang="en">

@@ -1,7 +1,7 @@
-const { createServer } = require("http");
-const next = require("next");
-const { WebSocketServer } = require("ws");
-const { parse } = require("url");
+import { createServer } from "http"
+import next from "next"
+import { WebSocketServer } from "ws";
+import { parse } from "url";
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
@@ -18,6 +18,29 @@ app.prepare().then(() => {
 
   const wssPlay = new WebSocketServer({ noServer: true });
   const wssChat = new WebSocketServer({ noServer: true });
+  //noserver:true => http서버를 생성하지않는다.
+  //noserver:false => http서버를 생성해 자신의 서버로 ws요청을 받는다.
+
+  server.on("upgrade", (request, socket, head) => {
+    const { pathname } = parse(request.url);
+
+    if (pathname === "/api/play") {
+      wssPlay.handleUpgrade(request, socket, head, (ws) => {
+        wssPlay.emit("connection", ws, request); //connection 이벤트 발생
+      });
+    } else if (pathname === "/api/chat") {
+      wssChat.handleUpgrade(request, socket, head, (ws) => {
+        wssChat.emit("connection", ws, request);
+      });
+    } else {
+      socket.destroy(); // 잘못된 경로는 연결 거부
+    }
+  });
+
+  server.listen(3000, (err) => {
+    if (err) throw err;
+    console.log("> Ready on port 3000");
+  });
 
   wssPlay.on("connection", (ws) => {
     console.log("new client connected");
@@ -57,25 +80,4 @@ app.prepare().then(() => {
       wssChat.clients.forEach((client) => client.send(JSON.stringify(data)));
     })
   })
-
-  server.on("upgrade", (request, socket, head) => {
-    const { pathname } = parse(request.url);
-
-    if (pathname === "/api/socket") {
-      wssPlay.handleUpgrade(request, socket, head, (ws) => {
-        wssPlay.emit("connection", ws, request);
-      });
-    } else if (pathname === "/api/chat") {
-      wssChat.handleUpgrade(request, socket, head, (ws) => {
-        wssChat.emit("connection", ws, request);
-      });
-    } else {
-      socket.destroy(); // 잘못된 경로는 연결 거부
-    }
-  });
-
-  server.listen(3000, (err) => {
-    if (err) throw err;
-    console.log("> Ready on port 3000");
-  });
 });

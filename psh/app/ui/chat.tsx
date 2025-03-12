@@ -14,8 +14,8 @@ export default function Chat() {
     const wsRef = useRef<WebSocket | null>(null);
 
     useEffect(() => {
-        const ws = new WebSocket('wss://solid-capybara-gp4qpq676v4hw654-3000.app.github.dev/api/chat');
-        wsRef.current = ws;
+        const wsUrl = `wss://${window.location.host}/api/chat`;
+        const ws = new WebSocket(wsUrl);
         ws.onopen = () => {
             console.log("chat server connected");
             ws.send(JSON.stringify({ username: username, chatting: "hello" }));

@@ -27,11 +27,8 @@ export default function Playground() {
 
     let intervalId: NodeJS.Timeout;
 
-    const ws = new WebSocket(
-      "wss://solid-capybara-gp4qpq676v4hw654-3000.app.github.dev/api/socket"
-      // "ws://localhost:3000/api/socket"
-      // "ws://www.psh88.com/api/socket"
-    );
+    const wsUrl = `wss://${window.location.host}/api/play`;
+    const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
       intervalId = setInterval(() => {
@@ -43,7 +40,6 @@ export default function Playground() {
     ws.onmessage = (event) => {
       updateMap(event);
     };
-
     ws.onclose = () => {
       console.log("websocket disconnected");
     };

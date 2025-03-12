@@ -5,3 +5,4 @@ export default function Loading() {
         </div>
     )
 }
+//next가 알아서 loading띄워줌
