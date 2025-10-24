@@ -1,8 +1,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* 이게있어야 tailwindcss가 적용됨 */
-
-.custom-height {
-    height: var(--screenh);
-}

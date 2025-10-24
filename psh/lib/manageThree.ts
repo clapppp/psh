@@ -69,12 +69,12 @@ function start() {
         //여기까지는 클라 본인꺼 렌더링.
 
         //여기부터는 다른유저들.
-        for (const name of userList.keys()) {
-          const gltf = gltfList.get(name);
-          const user = userList.get(name);
-          const nameMesh = nameList.get(name);
+        userList.forEach((value, key) => {
+          const gltf = gltfList.get(key);
+          const user = userList.get(key);
+          const nameMesh = nameList.get(key);
           if (gltf && user && nameMesh) setPosition(gltf, user, nameMesh);
-        }
+        })
 
         renderer.render(scene, camera);
       }

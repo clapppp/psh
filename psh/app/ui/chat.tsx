@@ -11,26 +11,22 @@ type chatting = {
 export default function Chat() {
     const [chat, setChat] = useState<chatting[]>([]);
     const [input, setInput] = useState('');
-    const wsRef = useRef<WebSocket | null>(null);
+    const ws = useRef<WebSocket | null>(null);
 
     useEffect(() => {
-        const wsUrl = `wss://${window.location.host}/api/chat`;
-        const ws = new WebSocket(wsUrl);
-        ws.onopen = () => {
-            console.log("chat server connected");
-            ws.send(JSON.stringify({ username: username, chatting: "hello" }));
+        ws.current = new WebSocket(`ws://${window.location.host}/api/chat`);
+        ws.current.onopen = () => {
+            ws.current?.send(JSON.stringify({ username, chatting: "hello" }));
         };
-
-        ws.onmessage = (message) => {
+        ws.current.onmessage = (message) => {
             console.log(message.data);
             const ms = JSON.parse(message.data);
             setChat(prev => [...prev, ms]);
         };
-
         return () => {
-            ws.close();
-        }
-    }, [])
+            ws.current?.close();
+        };
+    }, []);
 
 
     return (
@@ -45,9 +41,9 @@ export default function Chat() {
                 }
             </div>
             <button onClick={() => {
-                wsRef.current?.send(JSON.stringify({ username, chatting: input }))
+                ws.current?.send(JSON.stringify({ username, chatting: input }))
                 setInput('');
-            }}>send</button>
+            }}>send.</button>
             <input value={input} onChange={e => setInput(e.target.value)} />
         </>
 

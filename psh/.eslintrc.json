@@ -1,4 +1,0 @@
-{
-  "extends": "next/core-web-vitals"
-}
-//eslint문법검사 설정 에 next설정추가

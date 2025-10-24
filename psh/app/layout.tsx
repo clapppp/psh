@@ -5,7 +5,7 @@ import { GeistSans } from "geist/font/sans";
 
 export const metadata: Metadata = {
   title: "Park Suhyeon",
-  description: "Park Suhyeon's playground",
+  description: "Park Suhyeon Website",
 };
 
 export default function RootLayout({
