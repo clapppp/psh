@@ -1,5 +1,5 @@
 # PSH
-
+(168.107.4.68:3000)
 ## Overview
 **PSH** is a personal web platform designed as a **playground for my experimental web services**.
 
@@ -30,4 +30,5 @@ I implemented a **Custom Node.js Server** that wraps the Next.js application.
 - **Issue:** Initially, I applied **Linear Interpolation (Lerp)** to smooth out avatar movements. However, tuning the interpolation factor proved difficult, causing the avatar to "rubber-band" or slide excessively.
 - **Current Workaround:** To mitigate this, I increased the **WebSocket transmission frequency** to minimize the gap between updates. While this improved smoothness, it significantly increased network bandwidth usage.
 ---
+
 
