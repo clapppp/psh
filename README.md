@@ -26,7 +26,8 @@ I implemented a **Custom Node.js Server** that wraps the Next.js application.
 - **WebSocket Requests:** Intercepted by the custom server to handle real-time connection upgrades and message broadcasting, enabling multiplayer features without external PaaS dependency.
 
 ### Challenges & Improvements
-#### Real-time Movement Interpolation
-- **Issue:** I attempted to use **Linear Interpolation (Lerp)** to smooth out avatar movements. However, network jitter resulted in "rubber-banding" and unnatural sliding effects.
-- **Plan:** Implement **Client-Side Prediction** and **Reconciliation** algorithms to handle latency effectively and provide a smoother experience.
+#### Optimization of Real-time Movement
+- **Issue:** Initially, I applied **Linear Interpolation (Lerp)** to smooth out avatar movements. However, tuning the interpolation factor proved difficult, causing the avatar to "rubber-band" or slide excessively.
+- **Current Workaround:** To mitigate this, I increased the **WebSocket transmission frequency** to minimize the gap between updates. While this improved smoothness, it significantly increased network bandwidth usage.
 ---
+
