@@ -1,49 +1,48 @@
-name: Deploy to Server (Simple)
+name: Deploy Standalone to EC2
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.3
+      # 1. 소스 코드 가져오기 (여기에 이미 빌드된 standalone이 들어있음)
+      - name: Checkout Source
+        uses: actions/checkout@v4
+
+      # 2. EC2로 파일 전송 (standalone 폴더 통째로)
+      - name: Deploy to EC2
+        uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_KEY }}
-          port: 22
+          # .next/standalone 폴더 안의 내용물을 -> EC2의 ~/psh-deploy 폴더로 전송
+          source: "psh/.next/standalone/*"
+          target: "/home/ubuntu/psh"
+          strip_components: 3 # 경로 떼고 내용물만 보냄
+
+      # 3. EC2 서버 재시작
+      - name: Restart Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_KEY }}
           script: |
-            if [ ! -d "~/psh" ]; then
-              git clone https://github.com/clapppp/psh.git
-            fi
-            
-            cd ~/psh
-            
-            # 2. 최신 코드 가져오기
-            git fetch origin main
-            git reset --hard origin/main
-            
-            # 3. 의존성 설치 & 빌드
-            # (기존 node_modules 있으면 빠름)
-            cd ~/psh/psh
-            npm install
-            npm run build
-            
-            # 4. 기존 서버 종료
-            # 3000번 포트 쓰는 프로세스 찾아서 강제 종료
-            echo "Stopping existing server..."
+            # 1. 기존 서버 종료 (3000 포트)
+            echo "Killing old process..."
             fuser -k 3000/tcp || true
             
-            # 5. 서버 시작 (백그라운드 실행)
-            # 로그는 app.log에 저장
-            echo "Starting new server..."
-            nohup npm start > app.log 2>&1 &
+            # 2. 배포 폴더로 이동
+            cd /home/ubuntu/psh
             
-            # 6. 잘 떴는지 5초 대기 후 확인
-            sleep 5
-            # 프로세스 떠있는지 확인 (없으면 에러 처리)
-            pgrep -f "node server.js" || pgrep -f "npm start" || { echo "Server failed to start"; exit 1; }
-            echo "Deployment successful!"
+            # 3. 서버 실행
+            echo "Starting new server..."
+            nohup node server.js > app.log 2>&1 &
+            
+            echo "Deploy Success!"
