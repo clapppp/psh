@@ -6,8 +6,8 @@
 
 ## Tech Stack
 
-- **Framework:** Next.js (Custom Server)
-- **Graphics:** Three.js / React Three Fiber
+- **Framework:** Next.js
+- **Graphics:** Three.js
 - **Styling:** Tailwind CSS
 - **Real-time Communication:** WebSocket
 
