@@ -7,7 +7,8 @@ It is a space where I design, test, and iterate on interactive web-based ideas.
 http://168.107.4.85:3000/   
 
 ## Architecture
-<img width="600" height="350" alt="Image" src="https://github.com/user-attachments/assets/22ca8caa-3347-4625-ab09-083ad73a816b" />
+<img width="600" height="350" alt="Image" src="https://github.com/user-attachments/assets/22ca8caa-3347-4625-ab09-083ad73a816b" />   
+  
 - **Next.js** was chosen because it allowed me to build both the frontend and server-side logic within a single full-stack framework.
 - A **custom server** was introduced because the project required a dedicated **WebSocket server** for real-time communication.
 - **Three.js** was used to render 3D graphics directly in the browser.
