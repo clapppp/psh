@@ -30,15 +30,15 @@ An interactive virtual environment where visitors can control avatars and intera
 I implemented a **Custom Node.js Server** that wraps the Next.js application.
 
 - **HTTP Requests:** Delegated to the Next.js renderer.
-- **WebSocket Requests:** Intercepted by the custom server to handle real-time connection upgrades and message broadcasting, enabling multiplayer features without external PaaS dependency.
+- **WebSocket Requests:** Intercepted by the custom server to handle real-time connection upgrades and message broadcasting, enabling multiplayer features with chat.
 
-### Challenges & Improvements
+### Challenges & Learnings
 
-#### Optimization of Real-time Movement
+- **Challenge:** Initially, I applied **Linear Interpolation (Lerp)** to smooth out avatar movements. However, tuning the interpolation factor proved difficult, causing the avatar to "rubber-band" or slide excessively.
+- **Learning:** To mitigate this, I increased the **WebSocket transmission frequency** to minimize the gap between updates. While this improved smoothness, it significantly increased network bandwidth usage.
 
-- **Issue:** Initially, I applied **Linear Interpolation (Lerp)** to smooth out avatar movements. However, tuning the interpolation factor proved difficult, causing the avatar to "rubber-band" or slide excessively.
-- **Current Workaround:** To mitigate this, I increased the **WebSocket transmission frequency** to minimize the gap between updates. While this improved smoothness, it significantly increased network bandwidth usage.
+- **Challenge:** Initially, I applied **Linear Interpolation (Lerp)** to smooth out avatar movements. However, tuning the interpolation factor proved difficult, causing the avatar to "rubber-band" or slide excessively.
+- **Learning:** To mitigate this, I increased the **WebSocket transmission frequency** to minimize the gap between updates. While this improved smoothness, it significantly increased network bandwidth usage.
 
+url : 168.107.4.68:4000
 ---
-
-168.107.4.68:4000
