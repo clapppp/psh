@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: latest
+          node-version: 24
           cache: npm
           cache-dependency-path: psh/package-lock.json
 
@@ -62,6 +62,6 @@ jobs:
             npm ci --omit=dev
 
             fuser -k 3000/tcp || true
-            nohup node server.js > app.log 2>&1 &
+            nohup env NODE_ENV=production node server.js > app.log 2>&1 &
 
             echo "Deploy Success!"
