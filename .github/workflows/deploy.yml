@@ -12,7 +12,7 @@ jobs:
     steps:
       # 1. 소스 코드 가져오기 (여기에 이미 빌드된 standalone이 들어있음)
       - name: Checkout Source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6.0.2
 
       # 2. EC2로 파일 전송 (standalone 폴더 통째로)
       - name: Deploy to EC2
