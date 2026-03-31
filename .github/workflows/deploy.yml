@@ -10,39 +10,58 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. 소스 코드 가져오기 (여기에 이미 빌드된 standalone이 들어있음)
       - name: Checkout Source
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v6
 
-      # 2. EC2로 파일 전송 (standalone 폴더 통째로)
-      - name: Deploy to EC2
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: latest
+          cache: npm
+          cache-dependency-path: psh/package-lock.json
+
+      - name: Install Dependencies
+        working-directory: psh
+        run: npm ci
+
+      - name: Build Next App
+        working-directory: psh
+        run: npm run build
+
+      - name: Pack Runtime Files
+        run: |
+          cd psh
+          FILES=".next server.js package.json package-lock.json public"
+          tar -czf ../deploy.tar.gz $FILES
+
+      - name: Upload to EC2
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_KEY }}
-          # .next/standalone 폴더 안의 내용물을 -> EC2의 ~/psh-deploy 폴더로 전송
-          source: "psh/.next/standalone/*"
-          target: "/home/ubuntu/psh"
-          strip_components: 3 # 경로 떼고 내용물만 보냄
+          source: "deploy.tar.gz"
+          target: "/home/ubuntu/"
 
-      # 3. EC2 서버 재시작
       - name: Restart Server
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_KEY }}
           script: |
-            # 1. 기존 서버 종료 (3000 포트)
-            echo "Killing old process..."
-            fuser -k 3000/tcp || true
-            
-            # 2. 배포 폴더로 이동
+            set -e
+
+            rm -rf /home/ubuntu/psh
+            mkdir /home/ubuntu/psh
+
+            tar -xzf /home/ubuntu/deploy.tar.gz -C /home/ubuntu/psh
+            rm -f /home/ubuntu/deploy.tar.gz
+
             cd /home/ubuntu/psh
-            
-            # 3. 서버 실행
-            echo "Starting new server..."
+            npm ci --omit=dev
+
+            fuser -k 3000/tcp || true
             nohup node server.js > app.log 2>&1 &
-            
+
             echo "Deploy Success!"

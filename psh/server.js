@@ -18,8 +18,6 @@ app.prepare().then(() => {
 
   const wssPlay = new WebSocketServer({ noServer: true });
   const wssChat = new WebSocketServer({ noServer: true });
-  //noserver:true => http서버를 생성하지않는다.
-  //noserver:false => http서버를 생성해 자신의 서버로 ws요청을 받는다.
 
   server.on("upgrade", (request, socket, head) => {
     const { pathname } = parse(request.url);
@@ -32,6 +30,8 @@ app.prepare().then(() => {
       wssChat.handleUpgrade(request, socket, head, (ws) => {
         wssChat.emit("connection", ws, request);
       });
+    } else if (pathname === "/_next/webpack-hmr") {
+      app.getUpgradeHandler(request, socket, head);
     } else {
       socket.destroy(); // 잘못된 경로는 연결 거부
     }
