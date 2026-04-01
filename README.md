@@ -2,12 +2,13 @@
 **PSH** is a personal web platform designed as a **playground for my experimental web services**.  
 It is a space where I design, test, and iterate on interactive web-based ideas.
 
-## Screenshots
-![Screenshot](./.github/images/psh_screenshot.png)      
+## Screenshots 
+<img src="./.github/images/psh_screenshot.png" alt="Screenshot" width="600" />
+
 http://168.107.4.85:3000/   
 
 ## Architecture
-![Architecture](./.github/images/psh_architecture.png)      
+<img src="./.github/images/psh_architecture.png" alt="Architecture" width="600" />
   
 - **Next.js** was chosen because it allowed me to build both the frontend and server-side logic within a single full-stack framework.
 - A **custom server** was introduced because the project required a dedicated **WebSocket server** for real-time communication.
