@@ -1,6 +1,6 @@
 # PSH
 
-> 📖 [English Version](https://github.com/clapppp/psh/blob/main/README.md)
+> 📖 [English Version](./README.en.md)
 
 **PSH**는 실험적인 웹 서비스들을 위한 **개인 웹 플랫폼 플레이그라운드**입니다.  
 다양한 인터랙티브 웹 아이디어를 설계하고, 테스트하고, 발전시키는 공간입니다.
